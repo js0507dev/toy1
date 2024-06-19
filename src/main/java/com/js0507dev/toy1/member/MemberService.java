@@ -1,6 +1,6 @@
 package com.js0507dev.toy1.member;
 
-import lombok.RequiredArgsConstructor;
+import com.js0507dev.toy1.exception.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class MemberService {
   }
 
   public Member getById(Long id) {
-    return this.findById(id).orElseThrow(); // TODO: throw not found exception
+    return this.findById(id).orElseThrow(() -> new NotFoundException("Member not found. Id: " + id));
   }
 
   public Member updateById(Long id, UpdateMemberReqDto dto) {
@@ -30,19 +30,13 @@ public class MemberService {
     target.setName(dto.getName());
     target.setEmail(dto.getEmail());
 
-    try {
-      return this.memberRepository.save(target);
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+    return this.memberRepository.save(target);
   }
 
-  public Boolean deleteById(Long id) {
-    try {
-      this.memberRepository.deleteById(id);
-      return true;
-    } catch (Exception e) {
-      return false;
+  public void deleteById(Long id) {
+    if (this.findById(id).isEmpty()) {
+      throw new NotFoundException("Member not found. Id: " + id);
     }
+    this.memberRepository.deleteById(id);
   }
 }

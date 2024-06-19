@@ -8,8 +8,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @Slf4j
 @RestController
 @RequestMapping("/members/")
@@ -38,7 +36,7 @@ public class MemberController {
   @DeleteMapping("{id}")
   @CacheEvict(value = "Member", key = "#id")
   public ResponseEntity<Boolean> deleteById(@PathVariable Long id) {
-    Boolean deleted = this.memberService.deleteById(id);
-    return ResponseEntity.ok(deleted);
+    this.memberService.deleteById(id);
+    return ResponseEntity.noContent().build();
   }
 }
