@@ -4,12 +4,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
-@Getter
-@Setter
+@Getter @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Member {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
@@ -17,7 +18,6 @@ public class Member {
   private String name;
   private String email;
 
-  protected Member() {}
   public Member(String name, String email) {
     this.name = name;
     this.email = email;

@@ -33,10 +33,11 @@ public class MemberService {
     return this.memberRepository.save(target);
   }
 
-  public void deleteById(Long id) {
+  public Boolean deleteById(Long id) {
     if (this.findById(id).isEmpty()) {
       throw new NotFoundException("Member not found. Id: " + id);
     }
     this.memberRepository.deleteById(id);
+    return true;
   }
 }
