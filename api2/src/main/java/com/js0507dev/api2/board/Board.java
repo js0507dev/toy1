@@ -1,4 +1,4 @@
-package com.js0507dev.toy1.member;
+package com.js0507dev.api2.board;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,25 +8,27 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
 
-@Entity
-@EntityListeners({AuditingEntityListener.class})
-@Getter @Setter
 @Builder
+@EntityListeners({AuditingEntityListener.class})
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member {
+@Entity
+@Getter @Setter
+public class Board {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
-  private String name;
-  private String email;
+  private String title;
+  private String description;
+  private Long creatorId;
   @CreatedDate
   private Date createdAt;
   @LastModifiedDate
   private Date updatedAt;
 
-  public Member(String name, String email) {
-    this.name = name;
-    this.email = email;
+  public Board(String title, String description, Long creatorId) {
+    this.title = title;
+    this.description = description;
+    this.creatorId = creatorId;
   }
 }

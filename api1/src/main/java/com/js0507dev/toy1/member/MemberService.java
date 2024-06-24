@@ -22,22 +22,25 @@ public class MemberService {
   }
 
   public Member getById(Long id) {
-    return this.findById(id).orElseThrow(() -> new NotFoundException("Member not found. Id: " + id));
+    return this
+        .findById(id)
+        .orElseThrow(() -> new NotFoundException("Member not found. Id: " + id));
   }
 
-  public Member updateById(Long id, UpdateMemberReqDto dto) {
+  public void updateById(Long id, UpdateMemberReqDto dto) {
     Member target = this.getById(id);
     target.setName(dto.getName());
     target.setEmail(dto.getEmail());
 
-    return this.memberRepository.save(target);
+    this.memberRepository.save(target);
   }
 
-  public Boolean deleteById(Long id) {
-    if (this.findById(id).isEmpty()) {
+  public void deleteById(Long id) {
+    if (this
+        .findById(id)
+        .isEmpty()) {
       throw new NotFoundException("Member not found. Id: " + id);
     }
     this.memberRepository.deleteById(id);
-    return true;
   }
 }

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/members/")
+@RequestMapping("/members")
 public class MemberController {
   private MemberService memberService;
 
@@ -19,23 +19,23 @@ public class MemberController {
     this.memberService = memberService;
   }
 
-  @GetMapping("{id}")
+  @GetMapping("/{id}")
   @Cacheable(value = "Member", key = "#id")
   public ResponseEntity<MemberDto> findById(@PathVariable Long id) {
     Member found = this.memberService.getById(id);
     return ResponseEntity.ok(MemberDto.from(found));
   }
 
-  @PutMapping("{id}")
+  @PutMapping("/{id}")
   @CachePut(value = "Member", key = "#id")
-  public ResponseEntity<MemberDto> updateById(@PathVariable Long id, @RequestBody UpdateMemberReqDto dto) {
-    Member updated = this.memberService.updateById(id, dto);
-    return ResponseEntity.ok(MemberDto.from(updated));
+  public ResponseEntity<Void> updateById(@PathVariable Long id, @RequestBody UpdateMemberReqDto dto) {
+    this.memberService.updateById(id, dto);
+    return ResponseEntity.noContent().build();
   }
 
-  @DeleteMapping("{id}")
+  @DeleteMapping("/{id}")
   @CacheEvict(value = "Member", key = "#id")
-  public ResponseEntity<Boolean> deleteById(@PathVariable Long id) {
+  public ResponseEntity<Void> deleteById(@PathVariable Long id) {
     this.memberService.deleteById(id);
     return ResponseEntity.noContent().build();
   }

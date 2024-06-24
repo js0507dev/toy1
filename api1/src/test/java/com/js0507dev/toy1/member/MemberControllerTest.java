@@ -17,7 +17,7 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @ContextConfiguration(classes = TestConfiguration.class)
@@ -57,7 +57,7 @@ public class MemberControllerTest {
       Long memberId = 1L;
 
       // when
-      when(memberService.getById(anyLong())).thenThrow(new NotFoundException(""));
+      doThrow(new NotFoundException("")).when(memberService).getById(anyLong());
 
       // then
       assertThrows(NotFoundException.class, () -> memberController.findById(memberId));
@@ -73,12 +73,6 @@ public class MemberControllerTest {
       Long memberId = 1L;
       String updateName = "name1";
       String updateEmail = "email1@email.com";
-      Member mocked = Member
-          .builder()
-          .id(memberId)
-          .name(updateName)
-          .email(updateEmail)
-          .build();
 
       // when
       UpdateMemberReqDto updateDto = UpdateMemberReqDto
@@ -86,17 +80,10 @@ public class MemberControllerTest {
           .name(updateName)
           .email(updateEmail)
           .build();
-      when(memberService.updateById(memberId, updateDto)).thenReturn(mocked);
-      ResponseEntity<MemberDto> found = memberController.updateById(memberId, updateDto);
+      ResponseEntity<Void> found = memberController.updateById(memberId, updateDto);
 
       // then
-      assertEquals(HttpStatus.OK, found.getStatusCode());
-
-      MemberDto resDto = found.getBody();
-      assertNotNull(resDto);
-      assertEquals(memberId, resDto.getId());
-      assertEquals(updateName, resDto.getName());
-      assertEquals(updateEmail, resDto.getEmail());
+      assertEquals(HttpStatus.NO_CONTENT, found.getStatusCode());
     }
 
     @Test
@@ -110,7 +97,7 @@ public class MemberControllerTest {
           .build();
 
       // when
-      when(memberService.updateById(memberId, dto)).thenThrow(new NotFoundException(""));
+      doThrow(new NotFoundException("")).when(memberService).updateById(memberId, dto);
 
       // then
       assertThrows(NotFoundException.class, () -> memberController.updateById(memberId, dto));
@@ -126,8 +113,7 @@ public class MemberControllerTest {
       Long memberId = 1L;
 
       // when
-      when(memberService.deleteById(memberId)).thenReturn(true);
-      ResponseEntity<Boolean> res = memberController.deleteById(memberId);
+      ResponseEntity<Void> res = memberController.deleteById(memberId);
 
       // then
       assertEquals(HttpStatus.NO_CONTENT, res.getStatusCode());
@@ -140,7 +126,7 @@ public class MemberControllerTest {
       Long memberId = 1L;
 
       // when
-      when(memberService.deleteById(memberId)).thenThrow(new NotFoundException(""));
+      doThrow(new NotFoundException("")).when(memberService).deleteById(memberId);
 
       // then
       assertThrows(NotFoundException.class, () -> memberController.deleteById(memberId));
