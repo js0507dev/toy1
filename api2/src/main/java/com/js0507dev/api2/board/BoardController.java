@@ -1,6 +1,8 @@
 package com.js0507dev.api2.board;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.js0507dev.api2.config.RabbitMQConfig;
+import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -8,14 +10,11 @@ import java.util.List;
 import java.util.stream.StreamSupport;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/boards")
 public class BoardController {
   private final BoardService boardService;
-
-  @Autowired
-  public BoardController(BoardService boardService) {
-    this.boardService = boardService;
-  }
+  private final RabbitTemplate rabbitTemplate;
 
   @GetMapping("")
   public ResponseEntity<List<BoardDto>> findAll() {
@@ -35,7 +34,9 @@ public class BoardController {
 
   @PostMapping("")
   public ResponseEntity<BoardDto> createOne(@RequestBody CreateOrUpdateBoardReqDto dto) {
-    return ResponseEntity.ok(BoardDto.from(boardService.createBoard(dto)));
+    Board created = boardService.createBoard(dto);
+    rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY, created);
+    return ResponseEntity.ok(BoardDto.from(created));
   }
 
   @PutMapping("/{id}")
