@@ -1,6 +1,6 @@
 package com.js0507dev.api2.board;
 
-import com.js0507dev.api2.config.RabbitMQConfig;
+import com.js0507dev.api2.config.RabbitMQProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +15,7 @@ import java.util.stream.StreamSupport;
 public class BoardController {
   private final BoardService boardService;
   private final RabbitTemplate rabbitTemplate;
+  private final RabbitMQProperties rabbitMQProperties;
 
   @GetMapping("")
   public ResponseEntity<List<BoardDto>> findAll() {
@@ -35,7 +36,7 @@ public class BoardController {
   @PostMapping("")
   public ResponseEntity<BoardDto> createOne(@RequestBody CreateOrUpdateBoardReqDto dto) {
     Board created = boardService.createBoard(dto);
-    rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE_NAME, RabbitMQConfig.ROUTING_KEY, created);
+    rabbitTemplate.convertAndSend(rabbitMQProperties.exchangeName(), rabbitMQProperties.routingKey(), created);
     return ResponseEntity.ok(BoardDto.from(created));
   }
 

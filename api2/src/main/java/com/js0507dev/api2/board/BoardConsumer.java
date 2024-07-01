@@ -1,14 +1,15 @@
 package com.js0507dev.api2.board;
 
-import com.js0507dev.api2.config.RabbitMQConfig;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class BoardConsumer {
-  @RabbitListener(queues = RabbitMQConfig.QUEUE_NAME)
+  @RabbitListener(queues = "${rabbitmq.queue_name}")
   public void consume(Board board) {
     log.info("Board consumed: {}", board);
   }

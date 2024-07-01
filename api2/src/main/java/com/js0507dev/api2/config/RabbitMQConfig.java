@@ -1,5 +1,6 @@
 package com.js0507dev.api2.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -8,25 +9,23 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+@RequiredArgsConstructor
 @Configuration
 public class RabbitMQConfig {
-  public static final String EXCHANGE_NAME = "sample.exchange";
-  public static final String QUEUE_NAME = "sample.queue";
-  public static final String ROUTING_KEY = "sample.route";
-  public static final String DEAD_LETTER_EXCHANGE_NAME = "sample.dead_letter.exchange";
+  private final RabbitMQProperties rabbitMQProperties;
 
   @Bean
   TopicExchange exchange() {
     return ExchangeBuilder
-        .topicExchange(EXCHANGE_NAME)
+        .topicExchange(rabbitMQProperties.exchangeName())
         .build();
   }
 
   @Bean
   Queue queue() {
     return QueueBuilder
-        .durable(QUEUE_NAME)
-        .deadLetterExchange(DEAD_LETTER_EXCHANGE_NAME)
+        .durable(rabbitMQProperties.queueName())
+        .deadLetterExchange(rabbitMQProperties.deadLetterExchangeName())
         .build();
   }
 
@@ -35,7 +34,7 @@ public class RabbitMQConfig {
     return BindingBuilder
         .bind(queue())
         .to(exchange())
-        .with(ROUTING_KEY);
+        .with(rabbitMQProperties.routingKey());
   }
 
   @Bean

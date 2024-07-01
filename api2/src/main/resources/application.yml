@@ -30,3 +30,9 @@ spring:
         dialect: org.hibernate.dialect.H2Dialect
         format_sql: true
         show_sql: true
+
+rabbitmq:
+  queue_name: sample.queue
+  exchange_name: sample.exchange
+  routing_key: sample.route
+  dead_letter_exchange_name: sample.dead_letter.exchange
